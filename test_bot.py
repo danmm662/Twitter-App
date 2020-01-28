@@ -1,6 +1,6 @@
 import tweepy, time, _thread
 
-import keys
+import keys, get_vid
 
 
 auth = tweepy.OAuthHandler(keys.CONSUMER_KEY, keys.CONSUMER_SECRET)
@@ -27,33 +27,54 @@ def delete_all_tweets():
 
 def main():
 
-    replied_tweets = set()
+    seen_tweets = set()
 
     while True:
 
         try:
-            for tweet in tweepy.Cursor(api.search, q="@test_tastie hello mate").items(5):    
-                
-                if tweet.id not in replied_tweets:
-                
-                    try:  
-                        tweetId = tweet.user.id
-                        username = tweet.user.screen_name
-                        api.update_status("@" + username + " hello brother, how you going?", in_reply_to_status_id = tweet.id_str)
-                        print('Replied to tweet')
-                        replied_tweets.add(tweet.id)
-                    except tweepy.TweepError as e:        
-                        print(e.reason)
+            for tweet in tweepy.Cursor(api.search, q="@DirectLinkBot download", result_type="recent", tweet_mode="extended").items(10):                
+
+                #Make sure it is not a tweet we have already seen
+                if tweet.id not in seen_tweets:
+
+                    video_tweet_id = tweet.in_reply_to_status_id
+
+                    #Ignore if the tweet isn't a reply
+                    if video_tweet_id is not None:
+
+                        video_tweet = api.get_status(video_tweet_id)
+                        vid_url = get_vid.get_vid_url(video_tweet)
+
+                        #If video URL can't be found
+                        if vid_url is not None:
+
+                            message = "Here's a direct link to the video you: " + vid_url + ". To download it, simply right click on it and press save as."                      
+                            api.send_direct_message(tweet.user.id, message)
+
+                            seen_tweets.add(tweet.id)
+                        
+                        else:
+                            print("Video can't be found ")
+
+                    else:
+                        print("Not replying to any tweet")
                 
                 else:
-                    print("Tweet already replied to")
+                    print("Tweet already seen")
 
 
-                time.sleep(60)
+            time.sleep(60)
 
-        except tweepy.TweepError as e:        
-            print(e.reason)
-            time.sleep(1)
+        except tweepy.TweepError as e:    
+
+            #If we are rate limited by twitter, wait 15 minutes before trying again    
+            if(e == tweepy.RateLimitError):
+                print("Rate limited, timeout for a moment")
+                time.sleep(900)                            
+            
+            else:
+                print(e.reason)
+                time.sleep(1)
         
 
 main()
