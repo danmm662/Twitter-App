@@ -27,8 +27,8 @@ def get_vid_url(tweet):
         #print(len(variants))
         #print(url)
     
+    #Video URL can't be found
     except (KeyError, AttributeError) as e:
-        print("Video URL cannot be found")
         url = None
 
     return url

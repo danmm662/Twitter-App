@@ -27,7 +27,15 @@ def delete_all_tweets():
 
 def main():
 
+    file = open("seen_tweets.txt", "r")
     seen_tweets = set()
+
+    for line in file:
+        seen_tweets.add(line.rstrip())
+
+    file.close
+
+    print(seen_tweets)
 
     while True:
 
@@ -35,7 +43,7 @@ def main():
             for tweet in tweepy.Cursor(api.search, q="@DirectLinkBot download", result_type="recent", tweet_mode="extended").items(10):                
 
                 #Make sure it is not a tweet we have already seen
-                if tweet.id not in seen_tweets:
+                if tweet.id_str not in seen_tweets:
 
                     video_tweet_id = tweet.in_reply_to_status_id
 
@@ -48,22 +56,32 @@ def main():
                         #If video URL can't be found
                         if vid_url is not None:
 
-                            message = "Here's a direct link to the video you: " + vid_url + ". To download it, simply right click on it and press save as."                      
+                            message = "Here's a direct link to the video: " + vid_url + ". To download it, simply right click on the video and press save as."                      
                             api.send_direct_message(tweet.user.id, message)
 
-                            seen_tweets.add(tweet.id)
+                            seen_tweets.add(tweet.id_str)
+                            file = open("seen_tweets.txt", "a")            
+                            file.write("\n" + tweet.id_str)
+                            file.close
                         
                         else:
                             print("Video can't be found ")
+                            seen_tweets.add(tweet.id_str)
+                            file = open("seen_tweets.txt", "a")            
+                            file.write("\n" + tweet.id_str)
+                            file.close
 
                     else:
                         print("Not replying to any tweet")
+                        seen_tweets.add(tweet.id_str)
+                        file = open("seen_tweets.txt", "a")            
+                        file.write("\n" + tweet.id_str)
+                        file.close
                 
                 else:
                     print("Tweet already seen")
-
-
-            time.sleep(60)
+            
+            time.sleep(10)
 
         except tweepy.TweepError as e:    
 
