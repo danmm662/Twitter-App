@@ -1,5 +1,5 @@
 # Twitter-App
-This Twitter app is a bot that provides a direct link to a video when mentioned. It can be found at [twitter.com/DirectLinkBot](twitter.com/DirectLinkBot).
+This Twitter app is a bot that provides a direct link to a video when mentioned. It can be found at [twitter.com/DirectLinkBot](https://twitter.com/DirectLinkBot).
 
 
 
