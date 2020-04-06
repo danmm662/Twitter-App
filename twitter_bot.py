@@ -40,7 +40,7 @@ def main():
     while True:
 
         try:
-            for tweet in tweepy.Cursor(api.search, q="@DirectLinkBot download", result_type="recent", tweet_mode="extended").items(10):                
+            for tweet in tweepy.Cursor(api.search, q="@VideoLinkBot download", result_type="recent", tweet_mode="extended").items(10):                
 
                 #Make sure it is not a tweet we have already seen
                 if tweet.id_str not in seen_tweets:
@@ -56,8 +56,8 @@ def main():
                         #If video URL can't be found
                         if vid_url is not None:
 
-                            message = "Here's a direct link to the video: " + vid_url + ". To download it, simply right click on the video and press save as."                      
-                            api.send_direct_message(tweet.user.id, message)
+                            message = "@" + tweet.user.screen_name + " Here's a direct link to the video: " + vid_url + ". To download it, simply right click on the video and press save as."                      
+                            api.update_status(message, in_reply_to_status_id = tweet.id) #send_direct_message(tweet.user.id, message)
 
                             seen_tweets.add(tweet.id_str)
                             file = open("seen_tweets.txt", "a")            
@@ -65,7 +65,10 @@ def main():
                             file.close
                         
                         else:
-                            print("Video can't be found ")
+                            message = "@" + tweet.user.screen_name + " Video cannot be found sorry."
+                            print(message)
+                            #Let user know 
+                            api.update_status(message, in_reply_to_status_id = tweet.id)
                             seen_tweets.add(tweet.id_str)
                             file = open("seen_tweets.txt", "a")            
                             file.write("\n" + tweet.id_str)
@@ -81,7 +84,7 @@ def main():
                 else:
                     print("Tweet already seen")
             
-            time.sleep(10)
+            time.sleep(60)
 
         except tweepy.TweepError as e:    
 
