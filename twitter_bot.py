@@ -58,7 +58,6 @@ def main():
 
                             message = "@" + tweet.user.screen_name + " Here's a direct link to the video: " + vid_url + ". To download it, simply right click on the video and press save as."                      
                             api.update_status(message, in_reply_to_status_id = tweet.id) #send_direct_message(tweet.user.id, message)
-
                             seen_tweets.add(tweet.id_str)
                             file = open("seen_tweets.txt", "a")            
                             file.write("\n" + tweet.id_str)
@@ -66,7 +65,6 @@ def main():
                         
                         else:
                             message = "@" + tweet.user.screen_name + " Video cannot be found sorry."
-                            print(message)
                             #Let user know 
                             api.update_status(message, in_reply_to_status_id = tweet.id)
                             seen_tweets.add(tweet.id_str)

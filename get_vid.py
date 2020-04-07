@@ -15,20 +15,20 @@ def get_vid_url(tweet):
         variants = tweet.extended_entities["media"][0]["video_info"]["variants"]
 
         #Remove the mpegURL
-        variants.pop()
+        for i in range(len(variants)):
+           v = variants[i]
+           if v["content_type"] == "application/x-mpegURL":
+               variants.remove(v)
+               break      
 
         #Sort the list by bitrate
         variants = sorted(variants, key=itemgetter('bitrate'), reverse=True) 
 
         url = variants[0]['url']
-        
-        #print(variants)
-        #print(type(variants))
-        #print(len(variants))
-        #print(url)
     
     #Video URL can't be found
     except (KeyError, AttributeError) as e:
+        print(e)
         url = None
 
     return url
