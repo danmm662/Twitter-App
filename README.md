@@ -4,5 +4,4 @@ This Twitter app is a bot that provides a direct link to a video when mentioned.
 
 
 ## To Do:
-* Let users know if direct link to video couldn't be found
-* Possibly add option to tweet reply to users if DMs aren't available (or give user option for which one they would prefer)
+* Add option so user can have video link messaged to them, instead of as a tweet reply.
